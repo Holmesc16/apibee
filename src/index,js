@@ -5,6 +5,18 @@ const swagger = require('./config/swagger')
 //Register Swagger
 fastify.register(require('fastify-swagger'), swagger.options)
 
+//GraphQL
+const gql = require('fastify-gql')
+
+// Import GraphQL Schema
+const schema = require('./schema')
+
+// Register Fastify GraphQL
+fastify.register(gql, {
+	schema,
+	graphiql: true
+})
+
 mongoose.connect('mongodb://localhost/cleatsheet', { useNewUrlParser: true})
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err))

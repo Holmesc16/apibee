@@ -1,5 +1,7 @@
 const boom = require('boom')
+
 const Cleats = require('../models/Cleats')
+const Player = require('../models/Player')
 
 exports.getCleats = async(req, res) => {
     try {
