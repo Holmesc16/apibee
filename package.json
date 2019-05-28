@@ -1,0 +1,19 @@
+{
+  "name": "apibee",
+  "version": "1.0.0",
+  "description": "A blazing fast REST API w/ Node.js, MongoDB, Fastify, and Swagger",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Holmesc16/apibee.git"
+  },
+  "author": "Cade Holmes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Holmesc16/apibee/issues"
+  },
+  "homepage": "https://github.com/Holmesc16/apibee#readme"
+}
