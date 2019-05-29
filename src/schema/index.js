@@ -43,20 +43,126 @@ const cleatType = new GraphQLObjectType({
     })
 
 const playerType = new GraphQLObjectType({
-
+    name: 'Player',
+    fields: () => ({
+        _id: { type: GraphQLID },
+        firstName: { type: GraphQLString },
+        lastName: { type: GraphQLString },
+        number: { type: GraphQLInt },
+        age: { type: GraphQLInt },
+        nationality: { type: GraphQLString },
+        club: {
+            name: { type: GraphQLString },
+            country: { type: GraphQLString },
+        },
+        position: { type: GraphQLString },
+        isStarter: { type: GraphQLBoolean },
+        cleats: {
+            type: cleatType,
+            async resolve(parent, args) {
+                return await cleatController.getPlayersCleats({ id: parent._id })
+            }
+        }
+    })
 })
 
-// price: String,
-//     releaseDate: Number,
-//     features: {
-//         terrain: String,
-//         material: String,
-//         size: Number,
-//         width: String,
-//         color: String
-//     },
-//     hidden: Boolean,
-//     img: {
-//         data: Buffer,
-//         contentType: String
-//     },
+const RootQuery = new GraphQLObjectType({
+    name: 'RootQueryType',
+    fields: {
+        cleat: {
+            type: cleatType,
+            args: { id: { type: GraphQLID } },
+            async resolve(parent, args) {
+                return await cleatController.getSingleCleats(args)
+            }
+        },
+        cleats: {
+            type: new GraphQLList(cleatType),
+            async resolve(parent, args) {
+                return await cleatController.getCleats()
+            }
+        },
+        player: {
+            type: playerType,
+            args: { id: { type: GraphQLID } },
+            async resolve(parent, args) {
+                return await playerController.getSinglePlayer(args)
+            }
+        }
+    }
+})
+
+const Mutations = new GraphQLObjectType({
+   name: 'Mutations',
+   fields:  {
+        addCleats: {
+            type: cleatType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLID)},
+                title: { type: new GraphQLNonNull(GraphQLString)},
+                brand: { type: new GraphQLNonNull(GraphQLString)},
+                price: { type: GraphQLString },
+                releaseDate: { type: GraphQLString },
+                features: {
+                    terrain: { type: GraphQLString },
+                    material: { type: GraphQLString},
+                    size: { type: GraphQLInt },
+                    width: { type: GraphQLString },
+                    color: { type: GraphQLString }
+                },
+                hidden: { type: GraphQLBoolean },
+                img: {
+                    data: { type: GraphQLNonNull },
+                    contentType: { type: GraphQLString }
+                },
+                player_id: {type: GraphQLID }
+            },
+            async resolve(parent, args) {
+                const data = await cleatController.addCleats(args)
+                return data
+            }
+        },
+        editCleats: {
+            type: cleatType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLID)},
+                title: { type: new GraphQLNonNull(GraphQLString)},
+                brand: { type: new GraphQLNonNull(GraphQLString)},
+                price: { type: new GraphQLNonNull(GraphQLString) },
+                releaseDate: { type: new GraphQLNonNull(GraphQLString) },
+                features: {
+                    terrain: { type: new GraphQLNonNull(GraphQLString) },
+                    material: { type: new GraphQLNonNull(GraphQLString) },
+                    size: { type: new GraphQLNonNull(GraphQLInt) },
+                    width: { type: new GraphQLNonNull(GraphQLString) },
+                    color: { type: new GraphQLNonNull(GraphQLString) }
+                },
+                hidden: { type: new GraphQLNonNull(GraphQLBoolean) },
+                img: {
+                    data: { type: new GraphQLNonNull },
+                    contentType: { type: new GraphQLNonNull(GraphQLString) }
+                },
+                player_id: {type: GraphQLID }
+            },
+            async resolve(parent, args) {
+                const data = await cleatController.editCleats(args)
+                return data
+            }
+        },
+        deleteCleats: {
+            type: cleatType,
+           args: {
+               id: { type: new GraphQLNonNull(GraphQLID) }
+           },
+           async resolve(parent, args) {
+               const data = await cleatController.deleteCleats(args)
+                return data
+            }
+        }
+    }
+   })
+
+   module.exports = new GraphQLSchema({
+       query: RootQuery,
+       mutation: Mutations
+   })
